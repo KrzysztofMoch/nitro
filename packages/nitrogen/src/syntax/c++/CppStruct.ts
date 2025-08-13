@@ -51,6 +51,7 @@ export function createCppStruct(
     .map((i) => includeHeader(i))
     .filter(isNotDuplicate)
   const cxxNamespace = NitroConfig.current.getCxxNamespace('c++')
+  const cxxNamespaceWithType = `${cxxNamespace}::${typename}`
 
   const cppCode = `
 ${createFileMetadataString(`${typename}.hpp`)}
@@ -82,18 +83,16 @@ namespace ${cxxNamespace} {
 
 namespace margelo::nitro {
 
-  using namespace ${cxxNamespace};
-
   // C++ ${typename} <> JS ${typename} (object)
   template <>
-  struct JSIConverter<${typename}> final {
-    static inline ${typename} fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
+  struct JSIConverter<${cxxNamespaceWithType}> final {
+    static inline ${cxxNamespaceWithType} fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       jsi::Object obj = arg.asObject(runtime);
-      return ${typename}(
+      return ${cxxNamespaceWithType}(
         ${indent(cppFromJsiParams, '        ')}
       );
     }
-    static inline jsi::Value toJSI(jsi::Runtime& runtime, const ${typename}& arg) {
+    static inline jsi::Value toJSI(jsi::Runtime& runtime, const ${cxxNamespaceWithType}& arg) {
       jsi::Object obj(runtime);
       ${indent(cppToJsiCalls, '      ')}
       return obj;

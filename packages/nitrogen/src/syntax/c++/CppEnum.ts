@@ -40,6 +40,7 @@ export function createCppEnum(
     )
     .join('\n')
   const cxxNamespace = NitroConfig.current.getCxxNamespace('c++')
+  const cxxNamespaceWithType = `${cxxNamespace}::${typename}`
 
   let isInsideValidValues: string | undefined
   if (isIncrementingEnum(enumMembers)) {
@@ -84,16 +85,14 @@ namespace ${cxxNamespace} {
 
 namespace margelo::nitro {
 
-  using namespace ${cxxNamespace};
-
   // C++ ${typename} <> JS ${typename} (enum)
   template <>
-  struct JSIConverter<${typename}> final {
-    static inline ${typename} fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
+  struct JSIConverter<${cxxNamespaceWithType}> final {
+    static inline ${cxxNamespaceWithType} fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       int enumValue = JSIConverter<int>::fromJSI(runtime, arg);
-      return static_cast<${typename}>(enumValue);
+      return static_cast<${cxxNamespaceWithType}>(enumValue);
     }
-    static inline jsi::Value toJSI(jsi::Runtime& runtime, ${typename} arg) {
+    static inline jsi::Value toJSI(jsi::Runtime& runtime, ${cxxNamespaceWithType} arg) {
       int enumValue = static_cast<int>(arg);
       return JSIConverter<int>::toJSI(runtime, enumValue);
     }

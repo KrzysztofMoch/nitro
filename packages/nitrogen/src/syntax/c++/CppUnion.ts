@@ -32,6 +32,7 @@ export function createCppUnion(
     .map((m) => `case hashString("${m.stringValue}"):`)
     .join('\n')
   const cxxNamespace = NitroConfig.current.getCxxNamespace('c++')
+  const cxxNamespaceWithType = `${cxxNamespace}::${typename}`
 
   const cppCode = `
 ${createFileMetadataString(`${typename}.hpp`)}
@@ -55,12 +56,10 @@ namespace ${cxxNamespace} {
 
 namespace margelo::nitro {
 
-  using namespace ${cxxNamespace};
-
   // C++ ${typename} <> JS ${typename} (union)
   template <>
-  struct JSIConverter<${typename}> final {
-    static inline ${typename} fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
+  struct JSIConverter<${cxxNamespaceWithType}> final {
+    static inline ${cxxNamespaceWithType} fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       std::string unionValue = JSIConverter<std::string>::fromJSI(runtime, arg);
       switch (hashString(unionValue.c_str(), unionValue.size())) {
         ${indent(cppFromJsiHashCases, '        ')}
@@ -68,7 +67,7 @@ namespace margelo::nitro {
           throw std::invalid_argument("Cannot convert \\"" + unionValue + "\\" to enum ${typename} - invalid value!");
       }
     }
-    static inline jsi::Value toJSI(jsi::Runtime& runtime, ${typename} arg) {
+    static inline jsi::Value toJSI(jsi::Runtime& runtime, ${cxxNamespaceWithType} arg) {
       switch (arg) {
         ${indent(cppToJsiCases, '        ')}
         default: [[unlikely]]
