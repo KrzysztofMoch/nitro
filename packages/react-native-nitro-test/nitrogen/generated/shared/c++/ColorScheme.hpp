@@ -37,12 +37,10 @@ namespace margelo::nitro::test {
 
 namespace margelo::nitro {
 
-  using namespace margelo::nitro::test;
-
   // C++ ColorScheme <> JS ColorScheme (union)
   template <>
-  struct JSIConverter<ColorScheme> final {
-    static inline ColorScheme fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
+  struct JSIConverter<margelo::nitro::test::ColorScheme> final {
+    static inline margelo::nitro::test::ColorScheme fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       std::string unionValue = JSIConverter<std::string>::fromJSI(runtime, arg);
       switch (hashString(unionValue.c_str(), unionValue.size())) {
         case hashString("light"): return ColorScheme::LIGHT;
@@ -51,7 +49,7 @@ namespace margelo::nitro {
           throw std::invalid_argument("Cannot convert \"" + unionValue + "\" to enum ColorScheme - invalid value!");
       }
     }
-    static inline jsi::Value toJSI(jsi::Runtime& runtime, ColorScheme arg) {
+    static inline jsi::Value toJSI(jsi::Runtime& runtime, margelo::nitro::test::ColorScheme arg) {
       switch (arg) {
         case ColorScheme::LIGHT: return JSIConverter<std::string>::toJSI(runtime, "light");
         case ColorScheme::DARK: return JSIConverter<std::string>::toJSI(runtime, "dark");

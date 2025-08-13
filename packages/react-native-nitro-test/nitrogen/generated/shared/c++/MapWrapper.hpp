@@ -44,19 +44,17 @@ namespace margelo::nitro::test {
 
 namespace margelo::nitro {
 
-  using namespace margelo::nitro::test;
-
   // C++ MapWrapper <> JS MapWrapper (object)
   template <>
-  struct JSIConverter<MapWrapper> final {
-    static inline MapWrapper fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
+  struct JSIConverter<margelo::nitro::test::MapWrapper> final {
+    static inline margelo::nitro::test::MapWrapper fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       jsi::Object obj = arg.asObject(runtime);
-      return MapWrapper(
+      return margelo::nitro::test::MapWrapper(
         JSIConverter<std::unordered_map<std::string, std::string>>::fromJSI(runtime, obj.getProperty(runtime, "map")),
         JSIConverter<SecondMapWrapper>::fromJSI(runtime, obj.getProperty(runtime, "secondMap"))
       );
     }
-    static inline jsi::Value toJSI(jsi::Runtime& runtime, const MapWrapper& arg) {
+    static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::test::MapWrapper& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, "map", JSIConverter<std::unordered_map<std::string, std::string>>::toJSI(runtime, arg.map));
       obj.setProperty(runtime, "secondMap", JSIConverter<SecondMapWrapper>::toJSI(runtime, arg.secondMap));

@@ -52,14 +52,12 @@ namespace margelo::nitro::test {
 
 namespace margelo::nitro {
 
-  using namespace margelo::nitro::test;
-
   // C++ Car <> JS Car (object)
   template <>
-  struct JSIConverter<Car> final {
-    static inline Car fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
+  struct JSIConverter<margelo::nitro::test::Car> final {
+    static inline margelo::nitro::test::Car fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       jsi::Object obj = arg.asObject(runtime);
-      return Car(
+      return margelo::nitro::test::Car(
         JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, "year")),
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, "make")),
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, "model")),
@@ -69,7 +67,7 @@ namespace margelo::nitro {
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "isFast"))
       );
     }
-    static inline jsi::Value toJSI(jsi::Runtime& runtime, const Car& arg) {
+    static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::test::Car& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, "year", JSIConverter<double>::toJSI(runtime, arg.year));
       obj.setProperty(runtime, "make", JSIConverter<std::string>::toJSI(runtime, arg.make));
